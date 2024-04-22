@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "apartment-drivers"
+version = "0.1.0"
+description = ""
+authors = ["Martin Petri Bagger <mpb@danskecommodities.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pandas = "^2.2.2"
+scikit-learn = "^1.4.2"
+requests = "^2.31.0"
+beautifulsoup4 = "^4.12.3"
+lxml = "^5.2.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
