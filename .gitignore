@@ -1,0 +1,19 @@
+# Python
+*.pyc
+__pycache__/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Poetry
+.poetry/
+.poetry.lock
+
+# MLflow
+mlruns/
+
+# Data
+data/
