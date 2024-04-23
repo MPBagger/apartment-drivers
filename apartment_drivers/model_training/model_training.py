@@ -9,17 +9,33 @@ from sklearn.metrics import mean_squared_error
 
 
 def split_data(df, target_column, test_size=0.2, random_state=42):
+    """
+    Split the data into features (X) and target (y).
+
+    Args:
+        df (pandas.DataFrame): The input DataFrame.
+        target_column (str): The name of the target column.
+        test_size (float, optional): The proportion of the dataset to include in the test split. Defaults to 0.2.
+        random_state (int, optional): The seed used by the random number generator. Defaults to 42.
+
+    Returns:
+        tuple: A tuple containing the features (X) and target (y) arrays.
+    """
     X = df.drop(target_column, axis=1)
     y = df[target_column]
     return X, y
 
 
-def train_linear_regression(df,
-                              target_column = "price",
-                              test_size=0.2, 
-                              random_state=42
-                              ):
+def train_linear_regression(df, target_column="price", test_size=0.2, random_state=42):
+    """
+    Train a linear regression model on the given DataFrame.
 
+    Args:
+        df (pandas.DataFrame): The input DataFrame.
+        target_column (str, optional): The name of the target column. Defaults to "price".
+        test_size (float, optional): The proportion of the dataset to include in the test split. Defaults to 0.2.
+        random_state (int, optional): The seed used by the random number generator. Defaults to 42.
+    """
     # Split the data
     X, y = split_data(df, target_column=target_column)
 

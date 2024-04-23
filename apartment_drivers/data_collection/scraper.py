@@ -86,8 +86,9 @@ def create_data_frame(filename):
 
 if __name__ == '__main__':
     url = 'https://www.boligsiden.dk/adresse/guldborgvej-20-9000-aalborg-08512731__20_______?udbud=1e3e17b2-7f65-4fbc-af1c-5fc3b3d72323'
-    size = get_meta(url)
-    size2 = get_meta(url)
-    print(size)
+    price = get_price(url)
+    print(price)
+    meta = get_meta(url)
+    print(meta)
     
     
