@@ -64,8 +64,12 @@ class CleanDate:
             df = df.drop(columns = ['address', 'til_salg', 'period', 'from'
                                     , 'appartment', 'pay', 'fees', 'renov'
                                     , 'time_on_market_a', 'time_on_market_b'
+                                    , 'floor_lvl', 'o_wall', 'sqm_pr', 'area'
+                                    , 'roof', 'value', 'last_price', 'til_leje'
+                                    , 'depo', 'size', 'sqm', 'garage'
                                     ])
-
+            
+            df.dropna(inplace=True)
             return df
 
     def __call__(self):
@@ -81,5 +85,5 @@ if __name__ == '__main__':
     DF = CleanDate()
     DF.clean_data.tail(40)
     DF.clean_data.info()
-
+    DF.raw.info()
 
