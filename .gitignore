@@ -8,9 +8,8 @@ build/
 *.egg-info/
 *.egg
 
-# Poetry
-.poetry/
-.poetry.lock
+# uv
+.venv/
 
 # MLflow
 mlruns/

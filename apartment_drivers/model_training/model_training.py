@@ -43,14 +43,14 @@ def train_linear_regression(df, target_column="price", test_size=0.2, random_sta
 
     # One-Hot Encoding:
     encoder_one_hot = OneHotEncoder()
-    X_train_one_hot = encoder_one_hot.fit_transform(X_train[['energy_l', 'varme', 'roof_type']])
+    X_train_one_hot = encoder_one_hot.fit_transform(X_train[['energy_class']])
 
     # Build linear regression model
     model_one_hot = LinearRegression()
     model_one_hot.fit(X_train_one_hot, y_train)
 
     # Evaluate model on the test set
-    X_test_one_hot = encoder_one_hot.transform(X_test[['energy_l','varme', 'roof_type']])
+    X_test_one_hot = encoder_one_hot.transform(X_test[['energy_class']])
     y_pred_one_hot = model_one_hot.predict(X_test_one_hot)
     mse = mean_squared_error(y_test, y_pred_one_hot)        
 
@@ -72,7 +72,7 @@ def train_linear_regression(df, target_column="price", test_size=0.2, random_sta
         # Log the model
         model_info = mlflow.sklearn.log_model(
             sk_model=model_one_hot,
-            artifact_path="apartment_price_model",
+            name="apartment_price_model",
             input_example=X_train,
             registered_model_name="linear_regression_model",
         )

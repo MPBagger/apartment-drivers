@@ -3,6 +3,35 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import json
 
+
+def _get_estate_data(url):
+    """
+    Fetches the page and extracts the estate data from the boliga-app-state script tag.
+
+    Args:
+        url (str): The URL to crawl.
+
+    Returns:
+        dict: The estate data dictionary, or None if not found.
+    """
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    app_state_tag = soup.find('script', id='boliga-app-state')
+    if not app_state_tag:
+        return None
+
+    raw = app_state_tag.text.replace('&q;', '"')
+    app_state = json.loads(raw)
+
+    # Find the oneurl key which contains property data
+    for key in app_state:
+        if 'oneurl' in key:
+            estates = app_state[key].get('body', {}).get('estate', [])
+            if estates:
+                return estates[0]
+    return None
+
+
 def get_price(url):
     """
     Crawls the given URL, extracts the price from the HTML content, and returns it.
@@ -13,48 +42,47 @@ def get_price(url):
     Returns:
         str: The price of the property.
     """
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    try:
-        price = soup.find('p', class_='text-blue-900 text-base font-bold text-right').text 
-    except:
-        price = 'N/A'
-    return price
+    estate = _get_estate_data(url)
+    if estate and estate.get('price'):
+        return str(estate['price'])
+    return 'N/A'
+
 
 def get_meta(url):
     """
-    Crawls the given URL, extracts the size of the property from the HTML content, and returns it.
+    Crawls the given URL, extracts property metadata, and returns it as a DataFrame.
 
     Args:
         url (str): The URL to crawl.
 
     Returns:
-        str: The size of the property.
+        pandas.DataFrame: A single-row DataFrame with the property metadata.
     """
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    data = soup.select('script')[-1].text
-    
-    meta_str = ''
-    for metadata in json.loads(data)['props']['pageProps']['dataLayer'].keys():
-        meta_str += json.loads(data)['props']['pageProps']['dataLayer'][metadata] + '|'
+    estate = _get_estate_data(url)
+    if estate is None:
+        return pd.DataFrame({'Address': [url], 'Price': ['N/A']})
 
-    meta = {}
-    for m in meta_str.split('|'):
-        if ':' in m:
-            meta[m.split(':')[0]] = m.split(':')[1]
-            
+    meta = {
+        'propertyType': estate.get('propertyType'),
+        'energyClass': estate.get('energyClass'),
+        'rooms': estate.get('rooms'),
+        'size': estate.get('size'),
+        'lotSize': estate.get('lotSize'),
+        'buildYear': estate.get('buildYear'),
+        'squaremeterPrice': estate.get('squaremeterPrice'),
+        'daysForSale': estate.get('daysForSale'),
+        'city': estate.get('city'),
+        'zipCode': estate.get('zipCode'),
+        'street': estate.get('street'),
+        'latitude': estate.get('latitude'),
+        'longitude': estate.get('longitude'),
+        'basementSize': estate.get('basementSize'),
+    }
+
     df = pd.DataFrame(meta, index=[0])
-    
     df['Address'] = url
-    
-    try:
-        price = soup.find('p', class_='text-blue-900 text-base font-bold text-right').text 
-    except:
-        price = 'N/A'
-        
-    df['Price'] = price
-    
+    df['Price'] = estate.get('price', 'N/A')
+
     return df
 
 def create_data_frame(filename):
@@ -85,7 +113,7 @@ def create_data_frame(filename):
     
 
 if __name__ == '__main__':
-    url = 'https://www.boligsiden.dk/adresse/guldborgvej-20-9000-aalborg-08512731__20_______?udbud=1e3e17b2-7f65-4fbc-af1c-5fc3b3d72323'
+    url = 'https://www.boliga.dk/adresse/assensvej-39-5853-oerbaek-1817003112'
     price = get_price(url)
     print(price)
     meta = get_meta(url)

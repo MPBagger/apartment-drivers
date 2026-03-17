@@ -5,21 +5,21 @@ The project will be based on the example case (here the apartment price driver e
 
 #### new project
 
-Let's create a new poetry project
+Let's create a new uv project
 
 ```shell
-poetry new apartment-drivers
+uv init apartment-drivers
 ```
 
 Adding needed packages
 
 ```shell
 cd apartment-drivers
-poetry add pandas scikit-learn requests beautifulsoup4 lxml 
+uv add pandas scikit-learn requests beautifulsoup4 lxml 
 ```
 
 ```shell
-poetry install
+uv sync
 ```
 
 #### initialize the git project
@@ -60,17 +60,17 @@ in this folder we will create a data cleaning script called `data_cleaning.py`
 
 ## Machine Learning
 
-Before we start running ML models we will install mlflow in our poetry env.
+Before we start running ML models we will install mlflow in our uv env.
 
 ```shell
-poetry add mlflow
+uv add mlflow
 ```
 
 You can read about mlflow [here](https://mlflow.org/docs/latest/introduction/index.html)
 mlflow provides you with a local UI that allows you to perform e.g. experiment tracking. You can access the ui by running the following command:
 
 ```shell
-poetry run mlflow ui
+uv run mlflow ui
 ```
 
 we will create a new folder for our ml scripts called `model_training` and a script called `model_training.py`. This script holds the logic for both running a logistic regression and logging to mlflow.

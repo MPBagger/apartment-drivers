@@ -12,7 +12,7 @@ class CleanDate:
         Initializes the CleanDate object.
         """
         self.raw = pd.read_csv('data/raw.csv')
-        self.current_year = 2024
+        self.current_year = 2026
         self.raw_columns = self.raw.columns
         self.clean_columns = self.snake_case()
         self.clean_data = self.clean_data()
@@ -48,25 +48,19 @@ class CleanDate:
             df = self.raw.copy()
             df.columns = self.clean_columns
             df = df.assign(
-                appartment = lambda x: x.til_salg.str.contains('lejlighed'),
-                price = lambda x: x.price.str.replace('.', '').str.replace(' kr', '').astype(float),
-                renovated_in_last_10_years = lambda x: self.current_year-10 <= x.renov,
-                age = lambda x: self.current_year - x.built,
-                time_on_market = lambda x: x.time_on_market_b,
-                price_weighted_sqm = lambda x: x.sqm_pr,
-                size_sqm = lambda x: x.til_salg.str.extract('(\d+) m²'),
+                price = lambda x: pd.to_numeric(x.price, errors='coerce'),
+                age = lambda x: self.current_year - x.build_year,
+                time_on_market = lambda x: x.days_for_sale,
+                price_weighted_sqm = lambda x: x.squaremeter_price,
+                size_sqm = lambda x: x['size'],
             )
 
-            df = df[df.appartment == True]
             df.reset_index(drop=True, inplace=True)
             df = df.replace(np.nan, None)
 
-            df = df.drop(columns = ['address', 'til_salg', 'period', 'from'
-                                    , 'appartment', 'pay', 'fees', 'renov'
-                                    , 'time_on_market_a', 'time_on_market_b'
-                                    , 'floor_lvl', 'o_wall', 'sqm_pr', 'area'
-                                    , 'roof', 'value', 'last_price', 'til_leje'
-                                    , 'depo', 'size', 'sqm', 'garage'
+            df = df.drop(columns = ['address', 'build_year', 'days_for_sale'
+                                    , 'squaremeter_price', 'size'
+                                    , 'street', 'latitude', 'longitude'
                                     ])
             
             df.dropna(inplace=True)
